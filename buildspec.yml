@@ -2,13 +2,12 @@ version: 0.1
 
 environment_variables:
   plaintext:
-    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
 
 phases:
   install:
     commands:
-      - apt-get update -y
-      - apt-get install -y maven
+      - yum update -y
+      - yum install -y maven
   
   pre_build:
     commands:
