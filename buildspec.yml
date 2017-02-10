@@ -12,7 +12,9 @@ phases:
   
   pre_build:
     commands:
-      - echo Nothing to do in the pre_build phase...
+      - echo env dump 
+      - env
+      - which mvn 
   
   build:
     commands:
