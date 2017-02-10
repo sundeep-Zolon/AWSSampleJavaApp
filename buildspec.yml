@@ -6,14 +6,15 @@ environment_variables:
 phases:
   install:
     commands:
-      - yum update -y
-      - yum install -y maven
+      - apt-get update -y
+      - apt-get install -y maven
   
   pre_build:
     commands:
       - echo env dump 
       - env
       - which mvn 
+      
   
   build:
     commands:
