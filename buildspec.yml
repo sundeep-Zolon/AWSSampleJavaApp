@@ -1,24 +1,19 @@
 version: 0.1
 
-environment_variables:
-  plaintext:
-
 phases:
   install:
     commands:
-      - apt-get update -y
-      - apt-get install -y maven
+      - echo no commands
   
   pre_build:
     commands:
       - echo env dump 
       - env
       - which mvn 
-      
-  
   build:
     commands:
-      - mvn install
+      - mvn test
+      - mvn package
   
   post_build:
     commands:
