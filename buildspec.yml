@@ -16,7 +16,7 @@ phases:
   
   build:
     commands:
-      - mvn package
+      - mvn install
   
   post_build:
     commands:
