@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Installing Tomcat 8"
-apt-get install tomcat8
+yum -y install tomcat8
 
 echo "Configuring Tomcat"
 
@@ -24,8 +24,6 @@ cp /etc/tomcat8/catalina.properties backup/etc/tomcat8/catalina.properties-orig-
 #copy our catalina properties
 cp etc/tomcat8/catalina.properties /etc/tomcat8/
 
-cp /etc/default/tomcat8 backup/etc/default/tomcat8
-
 echo "Installing mod_cfml Valve for Automatic Virtual Host Configuration"
 if [ -f lib/mod_cfml-valve_v1.1.05.jar ]; then
   cp lib/mod_cfml-valve_v1.1.05.jar /opt/lucee/current/
@@ -47,11 +45,11 @@ sed -i "s/SHARED-KEY-HERE/$shared_secret/g" /etc/tomcat8/server.xml
 
 echo "Setting Permissions on Lucee Folders"
 mkdir /var/lib/tomcat8/lucee-server
-chown -R tomcat8:tomcat8 /var/lib/tomcat8/lucee-server
+chown -R tomcat:tomcat /var/lib/tomcat8/lucee-server
 chmod -R 750 /var/lib/tomcat8/lucee-server
-chown -R tomcat8:tomcat8 /opt/lucee
+chown -R tomcat:tomcat /opt/lucee
 chmod -R 750 /opt/lucee
 
 echo "Setting JVM Max Heap Size to " $JVM_MAX_HEAP_SIZE
 
-sed -i "s/-Xmx128m/-Xmx$JVM_MAX_HEAP_SIZE/g" /etc/default/tomcat8
+echo "JAVA_OPTS=\"-Xmx$JVM_MAX_HEAP_SIZE\""  >> /etc/tomcat8/tomcat8.conf

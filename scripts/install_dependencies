@@ -2,68 +2,46 @@
 
 set -e
 
-CATALINA_HOME=/usr/share/tomcat7-codedeploy
+#make sure scripts are runnable
+chown -R root scripts/*.sh
+chmod u+x scripts/*.sh
 
-# Tar file name
-TOMCAT7_CORE_TAR_FILENAME='apache-tomcat-7.0.72.tar.gz'
-# Download URL for Tomcat7 core
-TOMCAT7_CORE_DOWNLOAD_URL="https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.72/bin/$TOMCAT7_CORE_TAR_FILENAME"
-# The top-level directory after unpacking the tar file
-TOMCAT7_CORE_UNPACKED_DIRNAME='apache-tomcat-7.0.72'
+LUCEE_VERSION="5.1.0.34"
+export LUCEE_VERSION="5.1.0.34"
+JVM_MAX_HEAP_SIZE="512m"
+export JVM_MAX_HEAP_SIZE="512m"
 
+export JVM_MAX_HEAP_SIZE="512m"
+export JVM_FILE="server-jre-8u51-linux-x64.gz"
+export JVM_VERSION="1.8.0_51"
 
-# Check whether there exists a valid instance
-# of Tomcat7 installed at the specified directory
-[[ -d $CATALINA_HOME ]] && { service tomcat7 status; } && {
-    echo "Tomcat7 is already installed at $CATALINA_HOME. Skip reinstalling it."
-    exit 0
+function separator {
+  echo " "
+  echo "------------------------------------------------"
+  echo " "
 }
 
-# Clear install directory
-if [ -d $CATALINA_HOME ]; then
-    rm -rf $CATALINA_HOME
-fi
-mkdir -p $CATALINA_HOME
+#make sure scripts are runnable
+chown -R root scripts/*.sh
+chmod u+x scripts/*.sh
 
-# Download the latest Tomcat7 version
-cd /tmp
-{ which wget; } || { yum install wget; }
-wget $TOMCAT7_CORE_DOWNLOAD_URL
-if [[ -d /tmp/$TOMCAT7_CORE_UNPACKED_DIRNAME ]]; then
-    rm -rf /tmp/$TOMCAT7_CORE_UNPACKED_DIRNAME
-fi
-tar xzf $TOMCAT7_CORE_TAR_FILENAME
+#download lucee
+./scripts/200-lucee.sh
+separator
 
-# Copy over to the CATALINA_HOME
-cp -r /tmp/$TOMCAT7_CORE_UNPACKED_DIRNAME/* $CATALINA_HOME
+#install tomcat
+./scripts/300-tomcat.sh
+separator
 
-# Install Java if not yet installed
-{ which java; } || { yum install java; }
+#install jvm
+./scripts/400-jvm.sh
+separator
 
-# Create the service init.d script
-cat > /etc/init.d/tomcat7 <<'EOF'
-#!/bin/bash
-# description: Tomcat7 Start Stop Restart
-# processname: tomcat7
-PATH=$JAVA_HOME/bin:$PATH
-export PATH
-CATALINA_HOME='/usr/share/tomcat7-codedeploy'
+#install nginx
+./scripts/500-nginx.sh
+separator
 
-case $1 in
-start)
-sh $CATALINA_HOME/bin/startup.sh
-;;
-stop)
-sh $CATALINA_HOME/bin/shutdown.sh
-;;
-restart)
-sh $CATALINA_HOME/bin/shutdown.sh
-sh $CATALINA_HOME/bin/startup.sh
-;;
-esac
-exit 0
-EOF
 
-# Change permission mode for the service script
-chmod 755 /etc/init.d/tomcat7
 
+
+CATALINA_HOME=/usr/share/tomcat7-codedeploy
